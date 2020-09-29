@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Canvas tutorial</title>
+    
+    <script type="text/javascript">
+      let mytext = "this is a *super* test and I *like* it so much !";
+      let x = 50;
+      let y = 200;
+
+      function texter(ctx, str, x, y, maxWidth, lineHeight){
+          let tmpWord = '';
+          let line = '';
+          let initialX = x;
+          
+          str.split(' ').forEach(word => {
+              if(word.startsWith('*') && word.endsWith('*')) {
+                  ctx.fillStyle = 'yellow';
+                  tmpWord = word.slice(1, word.length - 1) + ' ';
+                  line += tmpWord;
+              }
+              else {
+                  ctx.fillStyle = 'white';
+                  tmpWord = word + ' ';
+                  line += tmpWord;
+              }
+              
+              let lineWidth = ctx.measureText(line).width;
+              // wrap the text
+              if(lineWidth >= maxWidth) {
+                  line = '';
+                  console.log(line);
+                  y += lineHeight;
+                  x = initialX;
+              }
+              
+              console.log("y", y);
+              ctx.fillText(tmpWord, x, y);
+              x += ctx.measureText(tmpWord).width;
+          });
+      }
+
+      
+      function draw() {
+          var canvas = document.getElementById('preview');
+          if (canvas.getContext) {
+              var ctx = canvas.getContext('2d');
+
+              background = new Image();
+              background.src = 'default.jpg';
+              background.onload = () => {
+                  ctx.drawImage(background, 0, 0, 800, 600);
+                  ctx.font = '70px Unknown font, sans-serif';
+                  texter(ctx, document.getElementById("message").value, 50, 200, 600, 70);
+              }
+          }
+      }
+    </script>
+
+    <script>
+      window.addEventListener('load', () => {
+          document.getElementById("message").addEventListener('keyup', () => {
+              draw();
+          });
+      });
+    </script>
+    
+    <style type="text/css">
+      canvas { border: 1px solid black; }
+    </style>
+  </head>
+  <body onload="draw();">
+    <textarea id="message" rows="3" cols="97">ton texte en *jaune* parce que c'est bien avec des étoiles !</textarea><br/>
+    <canvas id="preview" width="800" height="600">
+    </canvas>
+  </body>
+</html>
